@@ -4,6 +4,7 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import LoginForm from './components/LoginForm'
 import CreateForm from './components/CreateForm'
+import Notification from './components/Notification'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -13,6 +14,8 @@ const App = () => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
+  const [errorMessage, setErrorMessage] = useState('')
+  const [okMessage, setOkMessage] = useState('')
 
 
   useEffect(() => {
@@ -38,14 +41,23 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
+      setOkMessage(`Welcome ${user.username}, log in successful`)
+      setTimeout(() => {
+        setOkMessage('')
+      }, 5000);
     } catch (exception) {
-      alert('Wrong credentials')
+      setErrorMessage('Wrong credentials')
+      setTimeout(()=>setErrorMessage(''),5000)
     }
   }
 
   const handleLogout = async () => {
     setUser(null)
     window.localStorage.removeItem('loggedUser')
+    setOkMessage('Log out successful')
+    setTimeout(() => {
+      setOkMessage('')
+    }, 5000);
   }
 
   const handleNewBlog = async (event) => {
@@ -59,6 +71,9 @@ const App = () => {
       .create(newBlog)
     
     setBlogs(blogs.concat(createdBlog))
+
+    setOkMessage(`new blog ${createdBlog.title} by ${createdBlog.author} created`)
+    setTimeout(()=>setOkMessage(''),5000)
 
   }
 
@@ -96,6 +111,7 @@ const App = () => {
 
   return (
     <>
+    <Notification errorMessage = {errorMessage} okMessage = {okMessage} />
     {uiToRender()}
     </>
   )
