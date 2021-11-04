@@ -60,7 +60,6 @@ const App = () => {
   }
 
   const handleNewBlog = (post) => {
-    console.log(createBlogFormRef)
     createBlogFormRef.current.toggleVisiblity()
     blogService
       .create(post)
@@ -77,6 +76,25 @@ const App = () => {
       .updateLikes({id, likes: blogToUpdate.likes + 1})
     updatedBlog.user = blogToUpdate.user
     setBlogs(blogs.map(b=> b.id===id ? updatedBlog : b))
+  }
+
+  const handleDelete = async (id) => {
+    const blogToDelete = blogs.find(b=>b.id===id)
+      if(window.confirm(`You are about to delete '${blogToDelete.title}' by ${blogToDelete.author}, are you sure?`)) {
+        try {
+        await blogService.deletePost(id)
+        setBlogs(blogs.filter(b=>b.id!==id))
+        setOkMessage('Post deleted successfully')
+        setTimeout(() => {
+          setOkMessage('')
+        }, 5000);
+      } catch(error) {
+        setErrorMessage(error.data.error)
+        setTimeout(() => {
+          setErrorMessage('')
+        }, 5000);
+      }
+    }
   }
 
   const uiToRender = () => {
@@ -103,7 +121,7 @@ const App = () => {
           </Togglable>
         {blogs
           .sort((first,second) => second.likes - first.likes)
-          .map(b=><Blog key={b.id} blog={b} addLikes={()=>addLikes(b.id)}/>)}
+          .map(b=><Blog key={b.id} blog={b} addLikes={()=>addLikes(b.id)} handleDelete = {()=>handleDelete(b.id)} />)}
       </div>
     )
     

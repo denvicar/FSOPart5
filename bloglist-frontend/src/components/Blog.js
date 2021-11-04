@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import blogService from '../services/blogs'
 
-const Blog = ({blog,addLikes}) => {
+const Blog = ({blog,addLikes,handleDelete}) => {
   const [detailView, setDetailView] = useState(false)
   const displayDetail = {display: detailView? '' : 'none'}
 
@@ -17,6 +17,8 @@ const Blog = ({blog,addLikes}) => {
     setDetailView(!detailView)
   }
 
+  const postByUser = (blog.user && blog.user.username === JSON.parse(window.localStorage.getItem('loggedUser')).username)
+
   return(
     <>
     <div style={blogStyle}>
@@ -26,7 +28,8 @@ const Blog = ({blog,addLikes}) => {
       <div style = {blogStyle}>
       {blog.url} <br />
       likes {blog.likes} <button onClick={addLikes}>like</button> <br />
-      {blog.user && blog.user.name}
+      {blog.user && blog.user.name} <br />
+      <button onClick={handleDelete} hidden={!postByUser}>delete</button>
       </div>
     </div>
     </>
