@@ -20,7 +20,7 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
-    )  
+    )
   }, [])
 
   useEffect(() => {
@@ -34,7 +34,7 @@ const App = () => {
     event.preventDefault()
 
     try {
-      const user = await loginService.login({username,password})
+      const user = await loginService.login({ username,password })
       window.localStorage.setItem('loggedUser',JSON.stringify(user))
       blogService.setToken(user.token)
       setUser(user)
@@ -43,10 +43,10 @@ const App = () => {
       setOkMessage(`Welcome ${user.username}, log in successful`)
       setTimeout(() => {
         setOkMessage('')
-      }, 5000);
+      }, 5000)
     } catch (exception) {
       setErrorMessage('Wrong credentials')
-      setTimeout(()=>setErrorMessage(''),5000)
+      setTimeout(() => setErrorMessage(''),5000)
     }
   }
 
@@ -56,43 +56,43 @@ const App = () => {
     setOkMessage('Log out successful')
     setTimeout(() => {
       setOkMessage('')
-    }, 5000);
+    }, 5000)
   }
 
   const handleNewBlog = (post) => {
     createBlogFormRef.current.toggleVisiblity()
     blogService
       .create(post)
-      .then(createdBlog=>{
+      .then(createdBlog => {
         setBlogs(blogs.concat(createdBlog))
         setOkMessage(`new blog ${createdBlog.title} by ${createdBlog.author} created`)
-        setTimeout(()=>setOkMessage(''),5000)
+        setTimeout(() => setOkMessage(''),5000)
       })
   }
 
   const addLikes = async (id) => {
-    const blogToUpdate = blogs.find(b=>b.id===id)
+    const blogToUpdate = blogs.find(b => b.id===id)
     const updatedBlog = await blogService
-      .updateLikes({id, likes: blogToUpdate.likes + 1})
+      .updateLikes({ id, likes: blogToUpdate.likes + 1 })
     updatedBlog.user = blogToUpdate.user
-    setBlogs(blogs.map(b=> b.id===id ? updatedBlog : b))
+    setBlogs(blogs.map(b => b.id===id ? updatedBlog : b))
   }
 
   const handleDelete = async (id) => {
-    const blogToDelete = blogs.find(b=>b.id===id)
-      if(window.confirm(`You are about to delete '${blogToDelete.title}' by ${blogToDelete.author}, are you sure?`)) {
-        try {
+    const blogToDelete = blogs.find(b => b.id===id)
+    if(window.confirm(`You are about to delete '${blogToDelete.title}' by ${blogToDelete.author}, are you sure?`)) {
+      try {
         await blogService.deletePost(id)
-        setBlogs(blogs.filter(b=>b.id!==id))
+        setBlogs(blogs.filter(b => b.id!==id))
         setOkMessage('Post deleted successfully')
         setTimeout(() => {
           setOkMessage('')
-        }, 5000);
+        }, 5000)
       } catch(error) {
         setErrorMessage(error.data.error)
         setTimeout(() => {
           setErrorMessage('')
-        }, 5000);
+        }, 5000)
       }
     }
   }
@@ -103,10 +103,10 @@ const App = () => {
         <LoginForm
           username = {username}
           password = {password}
-          handleUsernameChange = {({target}) => setUsername(target.value)}
-          handlePasswordChange = {({target}) => setPassword(target.value)}
+          handleUsernameChange = {({ target }) => setUsername(target.value)}
+          handlePasswordChange = {({ target }) => setPassword(target.value)}
           handleLogin = {handleLogin}
-          />
+        />
       )
     }
 
@@ -115,22 +115,21 @@ const App = () => {
         <h2>blogs</h2>
         <p>{user.name} logged in</p><button onClick={handleLogout}>logout</button>
         <Togglable buttonLabel='create note' ref={createBlogFormRef}>
-        <CreateForm 
-          createPost = {handleNewBlog}
+          <CreateForm
+            createPost = {handleNewBlog}
           />
-          </Togglable>
+        </Togglable>
         {blogs
           .sort((first,second) => second.likes - first.likes)
-          .map(b=><Blog key={b.id} blog={b} addLikes={()=>addLikes(b.id)} handleDelete = {()=>handleDelete(b.id)} />)}
+          .map(b => <Blog key={b.id} blog={b} addLikes={() => addLikes(b.id)} handleDelete = {() => handleDelete(b.id)} />)}
       </div>
     )
-    
   }
 
   return (
     <>
-    <Notification errorMessage = {errorMessage} okMessage = {okMessage} />
-    {uiToRender()}
+      <Notification errorMessage = {errorMessage} okMessage = {okMessage} />
+      {uiToRender()}
     </>
   )
 }
