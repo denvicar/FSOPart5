@@ -101,7 +101,9 @@ const App = () => {
           createPost = {handleNewBlog}
           />
           </Togglable>
-        {blogs.map(b=><Blog key={b.id} blog={b} addLikes={()=>addLikes(b.id)}/>)}
+        {blogs
+          .sort((first,second) => second.likes - first.likes)
+          .map(b=><Blog key={b.id} blog={b} addLikes={()=>addLikes(b.id)}/>)}
       </div>
     )
     
