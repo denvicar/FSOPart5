@@ -71,6 +71,14 @@ const App = () => {
       })
   }
 
+  const addLikes = async (id) => {
+    const blogToUpdate = blogs.find(b=>b.id===id)
+    const updatedBlog = await blogService
+      .updateLikes({id, likes: blogToUpdate.likes + 1})
+    updatedBlog.user = blogToUpdate.user
+    setBlogs(blogs.map(b=> b.id===id ? updatedBlog : b))
+  }
+
   const uiToRender = () => {
     if(user===null) {
       return (
@@ -93,7 +101,7 @@ const App = () => {
           createPost = {handleNewBlog}
           />
           </Togglable>
-        {blogs.map(b=><Blog key={b.id} blog={b} />)}
+        {blogs.map(b=><Blog key={b.id} blog={b} addLikes={()=>addLikes(b.id)}/>)}
       </div>
     )
     

@@ -1,5 +1,7 @@
 import React, {useState} from 'react'
-const Blog = ({blog}) => {
+import blogService from '../services/blogs'
+
+const Blog = ({blog,addLikes}) => {
   const [detailView, setDetailView] = useState(false)
   const displayDetail = {display: detailView? '' : 'none'}
 
@@ -23,7 +25,7 @@ const Blog = ({blog}) => {
     <div style={displayDetail}>
       <div style = {blogStyle}>
       {blog.url} <br />
-      likes {blog.likes} <button>like</button> <br />
+      likes {blog.likes} <button onClick={addLikes}>like</button> <br />
       {blog.user && blog.user.name}
       </div>
     </div>
