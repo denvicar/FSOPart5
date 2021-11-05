@@ -44,4 +44,17 @@ describe('Blog app', function() {
       cy.get('body').contains('titolo e2e').should('be.visible')
     })
   })
+
+  describe('And there is a post', function() {
+    beforeEach(function() {
+      cy.login({username: 'cfaenza', password: 'testpass'})
+      cy.createPost({title: 'titolo', author: 'autore', url: 'url'})
+    })
+
+    it('a like can be added', function() {
+      cy.contains('show').click()
+      cy.contains('like').click()
+      cy.get('body').contains('likes 1').should('be.visible')
+    })
+  })
 })
