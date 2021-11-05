@@ -43,37 +43,54 @@ describe('Blog app', function() {
       cy.get('.createForm').contains('create').click()
       cy.get('body').contains('titolo e2e').should('be.visible')
     })
-  })
+  
 
-  describe('And there is a post', function() {
-    beforeEach(function() {
-      cy.request('POST', 'http://localhost:3003/api/users', {
-        username: 'mlenders',
-        password: 'testpass2',
-        name: 'Mark Lenders'
+    describe('And there is a post', function() {
+      beforeEach(function() {
+        cy.request('POST', 'http://localhost:3003/api/users', {
+          username: 'mlenders',
+          password: 'testpass2',
+          name: 'Mark Lenders'
+        })
+        cy.createPost({ title: 'titolo', author: 'autore', url: 'url' })
       })
-      cy.login({ username: 'cfaenza', password: 'testpass' })
-      cy.createPost({ title: 'titolo', author: 'autore', url: 'url' })
+
+      it('a like can be added', function() {
+        cy.contains('show').click()
+        cy.contains('like').click()
+        cy.get('body').contains('likes 1').should('be.visible')
+      })
+
+      it('the user who added it can delete it', function() {
+        cy.contains('show').click()
+        cy.contains('delete').should('be.visible').click()
+        cy.get('body').should('not.contain','titolo autore')
+      })
+
+      it('other users cannot delete it', function() {
+        cy.contains('logout').click()
+        cy.login({ username: 'mlenders', password: 'testpass2' })
+        cy.get('html').should('contain', 'titolo autore')
+        cy.contains('show').click()
+        cy.contains('delete').should('not.be.visible')
+      })
     })
 
-    it('a like can be added', function() {
-      cy.contains('show').click()
-      cy.contains('like').click()
-      cy.get('body').contains('likes 1').should('be.visible')
-    })
+    describe('And there are several posts', function() {
+      beforeEach(function() {
+        cy.createPost({ title: 'titolo1', author: 'autore', url: 'url', likes: 1 })
+        cy.createPost({ title: 'titolo2', author: 'autore', url: 'url', likes: 2 })
+        cy.createPost({ title: 'titolo3', author: 'autore', url: 'url', likes: 3 })
+      })
 
-    it('the user who added it can delete it', function() {
-      cy.contains('show').click()
-      cy.contains('delete').should('be.visible').click()
-      cy.get('body').should('not.contain','titolo autore')
-    })
-
-    it.only('other users cannot delete it', function() {
-      cy.contains('logout').click()
-      cy.login({ username: 'mlenders', password: 'testpass2' })
-      cy.get('html').should('contain', 'titolo autore')
-      cy.contains('show').click()
-      cy.contains('delete').should('not.be.visible')
+      it.only('they are ordered by most likes', function () {
+        cy.contains('titolo1 autore')
+        cy.get('div.blogGeneral').then((divs) => {
+          cy.wrap(divs[0]).should('contain', 'titolo3')
+          cy.wrap(divs[1]).should('contain', 'titolo2')
+          cy.wrap(divs[2]).should('contain', 'titolo1')
+        })
+      })
     })
   })
 })
