@@ -32,4 +32,17 @@ describe('<Blog />', () => {
     expect(divDetail).toHaveTextContent('likes 2')
 
   })
+
+  test('that if like button is clicked twice there are two calls', () => {
+    document.body.innerHTML = ''
+    const mockHandler = jest.fn()
+    const componentWithHandler = render(<Blog blog={ { title: 'titolo', author: 'autore', url: 'url', likes: 2 } } addLikes={mockHandler} />)
+
+    const likeButton = componentWithHandler.getByText('like')
+    fireEvent.click(likeButton)
+    fireEvent.click(likeButton)
+
+    expect(mockHandler.mock.calls).toHaveLength(2)
+
+  })
 })
