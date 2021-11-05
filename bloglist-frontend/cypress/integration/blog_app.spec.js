@@ -29,4 +29,19 @@ describe('Blog app', function() {
         .and('have.css','color','rgb(255, 0, 0)')
     })
   })
+
+  describe('When logged in', function() {
+    beforeEach(function() {
+      cy.login({username: 'cfaenza', password: 'testpass'})
+    })
+
+    it('A blog can be created', function() {
+      cy.contains('create post').click()
+      cy.get('#title').type('titolo e2e')
+      cy.get('#author').type('cfaenza')
+      cy.get('#url').type('http://e2etesturl.com')
+      cy.get('.createForm').contains('create').click()
+      cy.get('body').contains('titolo e2e').should('be.visible')
+    })
+  })
 })

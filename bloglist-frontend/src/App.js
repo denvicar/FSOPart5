@@ -27,6 +27,7 @@ const App = () => {
     const user = window.localStorage.getItem('loggedUser')
     if(user) {
       setUser(JSON.parse(user))
+      blogService.setToken(JSON.parse(user).token)
     }
   },[])
 
@@ -114,7 +115,7 @@ const App = () => {
       <div>
         <h2>blogs</h2>
         <p>{user.name} logged in</p><button onClick={handleLogout}>logout</button>
-        <Togglable buttonLabel='create note' ref={createBlogFormRef}>
+        <Togglable buttonLabel='create post' ref={createBlogFormRef}>
           <CreateForm
             createPost = {handleNewBlog}
           />
